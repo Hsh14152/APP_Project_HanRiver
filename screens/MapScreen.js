@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import * as Location from 'expo-location';
 
@@ -18,13 +19,14 @@ import {
 import { COLORS } from '../constants/colors';
 import { ZONES, PARK_CENTERS } from '../data/zones';
 import ZoneDetailSheet from '../components/ZoneDetailSheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MapScreen({ route }) {
   const initialPark = route?.params?.parkId || 'yeouido';
   const [currentPark, setCurrentPark] = useState(initialPark);
   const [myLocation, setMyLocation] = useState(null);
   const [selectedZone, setSelectedZone] = useState(null);
-  const [isMyLocActive, setIsMyLocActive] = useState(null);
+  const [isMyLocActive, setIsMyLocActive] = useState(false);
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -44,25 +46,48 @@ export default function MapScreen({ route }) {
   }, []);
 
   useEffect(() => {
-    if (!currentPark) return;
-    if (mapRef.current) {
-      mapRef.current.animateCameraTo({
-        latitude: center.lat,
-        longitude: center.lng,
-        zoom: 15,
-      });
-    }
-  }, [currentPark]);
-
-  useEffect(() => {
     if (route?.params?.parkId) {
-      setCurrentPark(route.params.parkId);
+      const parkId = route.params.parkId;
+      setCurrentPark(parkId);
+      setIsMyLocActive(false);
+      setSelectedZone(null);
+
+      setTimeout(() => {
+        // 추가
+        const target = PARK_CENTERS[parkId];
+        if (target && mapRef.current) {
+          mapRef.current.animateCameraTo({
+            latitude: target.lat,
+            longitude: target.lng,
+            zoom: 15,
+          });
+        }
+      }, 300); // 추가
     }
-  }, [route?.params?.parkId]);
+  }, [route?.params?.timestamp]);
 
   const center = currentPark
     ? PARK_CENTERS[currentPark]
     : PARK_CENTERS['yeouido'];
+
+  const toggleBookmark = async (parkId) => {
+    try {
+      const saved = await AsyncStorage.getItem('bookmarks');
+      const bookmarks = saved ? JSON.parse(saved) : [];
+      if (bookmarks.includes(parkId)) {
+        Alert.alert('알림', '이미 즐겨찾기된 공원이에요!');
+        return;
+      }
+      const updated = [...bookmarks, parkId];
+      await AsyncStorage.setItem('bookmarks', JSON.stringify(updated));
+      Alert.alert(
+        '✅ 즐겨찾기 추가',
+        `${PARK_CENTERS[parkId].name} 한강공원이 즐겨찾기에 추가됐어요!`,
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -105,7 +130,17 @@ export default function MapScreen({ route }) {
               onPress={() => {
                 setCurrentPark(parkId);
                 setIsMyLocActive(false);
+
+                const target = PARK_CENTERS[parkId];
+                if (target && mapRef.current) {
+                  mapRef.current.animateCameraTo({
+                    latitude: target.lat,
+                    longitude: target.lng,
+                    zoom: 15,
+                  });
+                }
               }}
+              onLongPress={() => toggleBookmark(parkId)}
             >
               <Text
                 style={[
@@ -212,11 +247,5 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: 'white',
     elevation: 8, // 안드로이드 그림자
-  },
-  tabRow: {
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-    backgroundColor: 'white',
   },
 });

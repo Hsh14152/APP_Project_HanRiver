@@ -14,8 +14,8 @@ const Tab = createBottomTabNavigator();
 const TABS = [
   { name: '홈', icon: '🏠', component: HomeScreen },
   { name: '지도', icon: '🗺️', component: MapScreen },
-  { name: '즐겨찾기', icon: '🔖', component: BookmarkScreen },
-  { name: '설정', icon: '⚙️', component: SettingsScreen },
+  { name: '즐겨찾기', icon: '⭐', component: BookmarkScreen },
+  { name: '정보', icon: 'ℹ️', component: SettingsScreen },
 ];
 
 export default function App() {

@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "hangang-park",
+    "slug": "hangang-park",
+    "android": {
+      "package": "com.yourname.hangangpark"
+    },
+    "plugins": [
+      [
+        "@mj-studio/react-native-naver-map",
+        {
+          "client_id": "여기에_API_키_입력"
+        }
+      ]
+    ]
+  }
+}

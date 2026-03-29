@@ -52,6 +52,11 @@ export default function HomeScreen({ navigation }) {
           ]}
         >
           <Text style={styles.seasonText}>{seasonStatus.text}</Text>
+          <Text
+            style={[styles.seasonText, { marginTop: 4 }, { marginLeft: 14 }]}
+          >
+            (돗자리는 기간, 장소 상관없이 상시 이용 가능)
+          </Text>
         </View>
       </View>
 
@@ -62,7 +67,9 @@ export default function HomeScreen({ navigation }) {
           <TouchableOpacity
             key={parkId}
             style={styles.parkCard}
-            onPress={() => navigation.navigate('지도', { parkId })}
+            onPress={() =>
+              navigation.navigate('지도', { parkId, timestamp: Date.now() })
+            }
           >
             <View style={styles.parkCardLeft}>
               <Text style={styles.parkIcon}>{info.icon}</Text>
@@ -93,6 +100,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   hero: { backgroundColor: COLORS.brand, padding: 24, paddingTop: 48 },
   greeting: { color: 'rgba(255,255,255,0.85)', fontSize: 13 },
+  greeting2: { color: 'rgba(255,255,255,0.85)', fontSize: 11 },
   heroTitle: { color: 'white', fontSize: 20, fontWeight: 'bold', marginTop: 4 },
   seasonBadge: {
     marginTop: 10,
