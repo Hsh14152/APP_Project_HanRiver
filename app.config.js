@@ -35,7 +35,13 @@ export default ({ config }) => {
       ],
     },
     plugins: [
-      // @mj-studio 플러그인 제거하고 직접 주입만 사용
+      [
+        '@mj-studio/react-native-naver-map',
+        {
+          client_id: 'vb0jojyaaz',
+        },
+      ],
+      // AndroidManifest에 API 키 강제 주입
       (config) => {
         return withAndroidManifest(config, (config) => {
           const androidManifest = config.modResults.manifest;
