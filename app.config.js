@@ -21,6 +21,8 @@ export default ({ config }) => {
     },
     android: {
       package: 'com.hsh.hangangpark', // 네이버 콘솔과 일치해야 함
+      compilerSdkVersion: 34, // 추가
+      targetSdkVersion: 34, // 추가
       adaptiveIcon: {
         foregroundImage: './assets/icon.png',
         backgroundColor: '#03C75A',
